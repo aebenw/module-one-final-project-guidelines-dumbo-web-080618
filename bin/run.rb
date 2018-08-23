@@ -164,13 +164,8 @@ def signup
         case prompt
         when "yes"
         add(user)
-<<<<<<< HEAD
-      when "exit"
-        puts "Thanks for using! Have a great day.M+~~~~~~~~+=~~=D.
-=======
         when "no"
         puts "Thanks for using! Have a great day. M+~~~~~~~~+=~~=D.
->>>>>>> Juan
               .M=~~~$+~~~~~~~~~~~~~~~O.
            :Z~~~~~~~~~~~~~~~~~~~~~~~~~~.
          O7Z~~~~~+~~~~~~~$Z+~~~~~ZZ~~~~~D.
