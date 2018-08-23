@@ -284,7 +284,7 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
 
     case i
     when "email"
-      puts "What would you like to change your email to?" 
+      puts "What would you like to change your email to?"
         new_email = gets.chomp.downcase
         if EmailAddress.valid?(new_email) != true
           puts "That was an invalid email address format,please try again"
@@ -336,7 +336,7 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
 
     puts "How much would you like to spend?"
     number = gets.chomp.downcase
-    const = "abcdefghijklmnopqrstuvwxyz"
+    const = "abcdefghijklmnopqrstuvwxyz '.,/'][=-0`~#!@{'$%^&*()_+|}{;:',.?/'/"
     if number == "exit"
          find_by_response(name, user)
     elsif const.include?(number)
@@ -346,14 +346,16 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
       puts `clear`
       selected_act = Activity.select{|info|info.name == name && info.price <= number.to_i}
       if selected_act.length == 0
-        puts "Sorry, there was nothing in that price range. Want to try again?"
-        response = gets.chomp
-        if response.include?("yes")
+        t = TTY::Prompt.new.select("Sorry, there was nothing in that price range. Want to try again?") do |y|
+          y.choices "Yes" => "Yes", "No" => "No"
+        end
+
+        case t
+        when  "Yes"
           find_by_response(name, user)
-        elsif response.include?("no")
-          puts “get more money”
+        when "No"
           add(user)
-      end
+        end
   else
     prompt = TTY::Prompt.new
     options = []
@@ -367,7 +369,7 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
     user.reload
 
     i = TTY::Prompt.new.select("Activity saved in your profile! Do you want to:") do |y|
-      y.choices "Look for more events?" => "events", "See saved activities?" => "saved_events", "Log out?" => "exit"
+      y.choices "Look for more events?" => "events", "See saved activities?" => "saved_events", "Log out?" => "main", Exit: "exit"
     end
 
         case i
@@ -375,6 +377,8 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
           add(user)
         when "saved_events"
           saved_activities(user)
+        when "main"
+          main(user)
         when "exit"
           puts "Come back soon!"
           exit
