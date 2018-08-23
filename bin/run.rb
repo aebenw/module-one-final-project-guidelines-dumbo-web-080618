@@ -1,56 +1,10 @@
 require_relative '../config/environment'
 
-class String
- # colorization
- def colorize(color_code)
-   "\e[#{color_code}m#{self}\e[0m"
- end
 
- def red
-   colorize(31)
- end
-
- def green
-   colorize(32)
- end
-
- def yellow
-   colorize(33)
- end
-
- def blue
-   colorize(34)
- end
-
- def pink
-   colorize(35)
- end
-
- def light_blue
-   colorize(36)
- end
-end
-
-
+#sara = User.new(name: "Sara", max_price_range: 20, email: "Sarah.C@hotmail")
 def greeting
-  prompt = TTY::Prompt.new.select("░░░░░░░▄▀▀▀▀█░░░░░░░░░░░░░░░░░░░░
-░░░░░░█▀░░░░█░░░░░░░░░░░░░░░░░░░░
-░░░░░█░░░░░░█▀▀▀▄▄░░░░░░▓░░░░░░░░
-░░░░▄█░░░░░░░░░░░░▀▀▄▄░▓▓▓░░░░░░░
-░░░▄█░░░░░░░░░░░░░░░░░▀▓▓▓▓▀▀▀█░░
-▀▄▄█░░░░░░░░░░░░░░░░▓▓▓▓▓▓▓▓░░█░░
-▀▄█░▀▄░░░░▄▄░░░░░░▓▓▓▓▓▓▓░░▓▓▓▓▓▓
-▄▀█▀▄░░░░███░░░░░░░░░▓▓▓▓▓▓▓▓▓▓▓░
-░▀█▀▄░░░░▀▀░░░░░░░░░▄▄░░░▓▓▓▓▓░░░
-░░▀█░░░░░░░░▄▄░░░░░███░░░░▓▓░█░░░
-░░░▀█░░░░░░█░░▀▄░░░▀▀░░░░░▓░█▀░░░
-░░░░▀█░░░░░░▀▄▄▀░░░░░░░░▀▄░█▀░░░░
-░░░░░░▀█▄░░░░░░░░░░░░░▀▄░░██░░░░░
-░░░░░░░░░▀█▄░░░░░░░░▀▄░░██▀░▀░░░░
-░░░░░░░░░░░░▀▀▄▄▄▄▄▄▄█▀█░░▀▄░░░░░
-░░░░░░░░░░░░░░░░░░░░░░░░▀░░░░░░░░
-Welcome to Heard From a Friend.".pink) do |y|
-    y.choices "Sign in" => "existing", "New Member" => "signup", Exit: "exit"
+  prompt = TTY::Prompt.new.select("Welcome to Heard From a Friend.") do |y|
+    y.choices "Sign in": "existing", "New Member" => "signup", Exit: "exit"
   end
 
   case prompt
@@ -62,26 +16,26 @@ Welcome to Heard From a Friend.".pink) do |y|
     signup
 
   when "exit"
-    puts "Enjoy your day!".blue
+    puts "Enjoy your day!"
     exit
   end
 end
 
 def signup
-  puts "Please enter an Email Address".light_blue
+  puts "Please enter an Email Address"
   email_address = gets.strip.downcase
   if email_address == "exit"
-    puts "Thank you for using Heard From a Friend, have a nice day.".red
+    puts "Thank you for using Heard From a Friend, have a nice day."
     exit
   end
   if EmailAddress.valid?(email_address) != true
-    puts "That was an invalid email address format,please try again".green
+    puts "That was an invalid email address format,please try again"
     signup
   else
-    puts "Please enter your full name".blue
+    puts "Please enter your full name"
     name = gets.strip.downcase
       if name == "exit"
-        puts "Thank you for using Heard From a Friend, have a nice day.".pink
+        puts "Thank you for using Heard From a Friend, have a nice day."
         exit
       end
 
@@ -100,7 +54,7 @@ def signup
           when "signup"
             signup
           when "exit"
-            puts "Thank you for using, have a nice day.".green
+            puts "Thank you for using, have a nice day."
             exit
           end
       end
@@ -110,7 +64,7 @@ def signup
 
   def existing
 
-    puts "Please enter your email address".yellow
+    puts "Please enter your email address"
     email_address = gets.chomp.downcase
     if !User.find_by(email:email_address)
       i = TTY::Prompt.new.select("Sorry, we can't seem to find the email address you entered. Would you like to:") do |y|
@@ -123,7 +77,7 @@ def signup
         when "signup"
           signup
         when "exit"
-          puts "Thank you for using, have a nice day.".green
+          puts "Thank you for using, have a nice day."
           exit
         end
     else
@@ -145,7 +99,7 @@ def signup
     when "add activities"
       add(user)
     when "exit"
-      puts "Thank you for using Heard From a Friend, have a nice day.".pink
+      puts "Thank you for using Heard From a Friend, have a nice day."
       exit
     when "update"
       update(user)
@@ -164,8 +118,8 @@ def signup
         case prompt
         when "yes"
         add(user)
-        when "no"
-        puts "Thanks for using! Have a great day. M+~~~~~~~~+=~~=D.
+      when "exit"
+        puts "Thanks for using! Have a great day.M+~~~~~~~~+=~~=D.
               .M=~~~$+~~~~~~~~~~~~~~~O.
            :Z~~~~~~~~~~~~~~~~~~~~~~~~~~.
          O7Z~~~~~+~~~~~~~$Z+~~~~~ZZ~~~~~D.
@@ -224,27 +178,29 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
     else
     g = all.each_with_index { |act, i| results.push(puts " #{i + 1}. Place: #{act.place},  Price :#{act.price},  Genre:#{act.genre}")}
     #binding.pry
-    t = TTY::Prompt.new.select("Do you want to delete anything from your activity list?") do |y|
-      y.choices "Yes" => "Yes", "No" => "No"
-    end
-    case t
-    when "Yes"
+    puts "Do you want to delete anything from your activity list?"
+      response = gets.chomp.downcase
+      if response.include?("yes")
           delete(user)
-    when "No"
-        i = TTY::Prompt.new.select("Would you like to:") do |y|
-        y.choices "Go back to your saved activites?" => "saved_activities", "Search for new activities?" => "search", "Exit?" => "exit"
-        end
-          case i
-          when "saved_activities"
-            saved_activities(user)
-          when "search"
-            add(user)
-          when "exit"
-            puts "Thank you so much for using Heard from a Friend. Have a nice day!"
-            exit
+      elsif response.include?("no")
+            puts "Would you like to add any events?"
+              response_two = gets.chomp
+              if response_two.include?("yes")
+                add(user)
+              elsif response_two.include?("no")
+                i = TTY::Prompt.new.select("Would you like to:") do |y|
+                  y.choices "Go back to your saved activites?" => "saved_activities", "Exit?" => "exit"
+                end
+                case i
+                when "saved_activities"
+                  saved_activities(user)
+                when "exit"
+                  puts "Thank you so much for using Heard from a Friend. Have a nice day!"
+                  exit
+                end
+            end
           end
         end
-      end
       end
 
   def delete(user)
@@ -285,13 +241,9 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
     when "email"
       puts "What would you like to change your email to?"
         new_email = gets.chomp.downcase
-        if EmailAddress.valid?(new_email) != true
-          puts "That was an invalid email address format,please try again"
-        else
-          user.update(email: new_email)
-          puts "Email updated!"
-          update(user)
-        end
+        user.update(email: new_email)
+      puts "Email updated!"
+        update(user)
     when "name"
       puts "What would you like to change your name to?"
         new_name = gets.chomp.downcase
@@ -299,18 +251,19 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
         puts "Name updated!"
           update(user)
     when "delete"
-      t = TTY::Prompt.new.select("You sure you want to delete your profile?") do |y|
-        y.choices "Yes" => "Yes", "No" => "No"
-      end
+      puts "You sure you want to delete your profile?"
+        t = TTY::Prompt.new.select("Would you like to:") do |y|
+          y.choices "Yes" => "Yes", "No" => "No"
+        end
 
-      case t
-      when "Yes"
-        user.destroy
-        greeting
-      when "No"
-        puts "We were afraid we almost lost you there."
-        main(user)
-      end
+        case t
+        when "Yes"
+          user.destroy
+          greeting
+        when "No"
+          puts "We were afraid we almost lost you there."
+          main(user)
+        end
 
     when "main page"
       main(user)
@@ -336,28 +289,24 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
     puts "How much would you like to spend?"
     number = gets.chomp.to_i
 
-    ############# ************ I think a bug will occur if a string is typed  *************** ############
+    ####### tty prompt to be able to  give the user a choice to either put in a price range or not ######
 
     puts `clear`
     selected_act = Activity.select{|info|info.name == name && info.price <= number}
     if selected_act.length == 0
-      i = TTY::Prompt.new.select("Sorry, nothing in your price range =/. Do you want to:") do |y|
-        y.choices "Search for another activity?" => "events", "Go back to home page" => "main", "Log out" =>  "exit"
-      end
-      case i
-      when "events"
-        add(user)
-      when "main"
-        main(user)
-      when "exit"
-        puts "Thank you for using!"
-        exit
+      puts "Sorry, there was nothing in that price range. Want to try again?"
+      response = gets.chomp
+      if response.include?("yes")
+        find_by_response(name, user)
+      elsif response.include?("no")
+        puts “get more money”
+          add(user)
       end
   else
     prompt = TTY::Prompt.new
     options = []
       ##################### How do we make it into a table??? ####################
-    selected_act.each {|act| options.push({name: "Place: #{act.place}, Price: $#{act.price}, Type: #{act.genre}, Best Time to Go: #{act.best_time}", value: act})}
+    selected_act.each {|act| options.push({name: "Place: #{act.place}, Price: #{act.price}, Type: #{act.genre}, Best Time to Go: #{act.best_time}", value: act})}
     var = prompt.select("Here are your options:", options)
 
     puts `clear`
