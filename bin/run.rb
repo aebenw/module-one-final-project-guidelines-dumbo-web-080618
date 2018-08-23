@@ -284,7 +284,7 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
 
     case i
     when "email"
-      puts "What would you like to change your email to?"
+      puts "What would you like to change your email to?" 
         new_email = gets.chomp.downcase
         if EmailAddress.valid?(new_email) != true
           puts "That was an invalid email address format,please try again"
