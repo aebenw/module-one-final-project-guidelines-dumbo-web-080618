@@ -188,9 +188,13 @@ def signup
     when "email"
       puts "What would you like to change your email to?"
         new_email = gets.chomp.downcase
-        user.update(email: new_email)
-      puts "Email updated!"
-        update(user)
+        if EmailAddress.valid?(new_email) != true
+          puts "That was an invalid email address format,please try again"
+        else
+          user.update(email: new_email)
+          puts "Email updated!"
+          update(user)
+        end
     when "name"
       puts "What would you like to change your name to?"
         new_name = gets.chomp.downcase
@@ -277,4 +281,4 @@ def signup
       end
   end
 
-signup
+greeting
