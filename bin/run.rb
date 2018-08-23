@@ -335,30 +335,30 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
   def find_by_response(name,user)
 
     puts "How much would you like to spend?"
-    number = gets.chomp.to_i
-
-    ############# ************ I think a bug will occur if a string is typed  *************** ############
-
-    puts `clear`
-    selected_act = Activity.select{|info|info.name == name && info.price <= number}
-    if selected_act.length == 0
-      i = TTY::Prompt.new.select("Sorry, nothing in your price range =/. Do you want to:") do |y|
-        y.choices "Search for another activity?" => "events", "Go back to home page" => "main", "Log out" =>  "exit"
-      end
-      case i
-      when "events"
-        add(user)
-      when "main"
-        main(user)
-      when "exit"
-        puts "Thank you for using!"
-        exit
+    number = gets.chomp.downcase
+    const = "abcdefghijklmnopqrstuvwxyz"
+    if number == "exit"
+         find_by_response(name, user)
+    elsif const.include?(number)
+      puts "Please type in a number."
+        find_by_response(name, user)
+    else
+      puts `clear`
+      selected_act = Activity.select{|info|info.name == name && info.price <= number.to_i}
+      if selected_act.length == 0
+        puts "Sorry, there was nothing in that price range. Want to try again?"
+        response = gets.chomp
+        if response.include?("yes")
+          find_by_response(name, user)
+        elsif response.include?("no")
+          puts “get more money”
+          add(user)
       end
   else
     prompt = TTY::Prompt.new
     options = []
       ##################### How do we make it into a table??? ####################
-    selected_act.each {|act| options.push({name: "Place: #{act.place}, Price: $#{act.price}, Type: #{act.genre}, Best Time to Go: #{act.best_time}", value: act})}
+    selected_act.each {|act| options.push({name: "Place: #{act.place}, Price: #{act.price}, Type: #{act.genre}, Best Time to Go: #{act.best_time}", value: act})}
     var = prompt.select("Here are your options:", options)
 
     puts `clear`
@@ -380,6 +380,7 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
           exit
         end
       end
+    end
   end
 
 
