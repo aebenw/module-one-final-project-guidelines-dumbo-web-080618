@@ -109,7 +109,7 @@ def signup
   def existing
 
     puts "Please enter your email address".yellow
-    email_address = gets.chomp.downcase
+    email_address = gets.strip.downcase
     if !User.find_by(email:email_address)
       i = TTY::Prompt.new.select("Sorry, we can't seem to find the email address you entered. Would you like to:") do |y|
         y.choices "Try again?" => "existing", "Make a new account?" => "signup", Exit: "exit"
@@ -250,12 +250,12 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
 
   def delete(user)
     # user.reload
-    user_a= user.activities
+    sa = SavedActivity.where(user_id: user.id)
     prompt = TTY::Prompt.new
     options = []
-    user_a.each {|act| options.push({name:"Place: #{act.place}, Price: $#{act.price}, Genre: #{act.genre}", value: act})}
+    sa.each {|act| options.push({name:"Place: #{act.activity.place}, Price: $#{act.activity.price}, Genre: #{act.activity.genre}", value: act})}
     var = prompt.select("You choose to delete", options)
-    #
+
 
     i = TTY::Prompt.new.select("Are you sure you want to delete this activity?") do |y|
       y.choices Yes: "yes", No: "no"
@@ -263,10 +263,9 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
     case i
     when "yes"
 
-      del = SavedActivity.where(user_id:user.id, activity_id:var.id).destroy_all
+       SavedActivity.destroy(var.id)
 
-      user.activities = user.activities.select {|act| act.id != var.id}
-      user.activities
+      user.reload
       saved_activities(user)
 
     when "no"
@@ -285,9 +284,24 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
     case i
     when "email"
       puts "What would you like to change your email to?"
-        new_email = gets.chomp.downcase
+        new_email = gets.strip.downcase
         if EmailAddress.valid?(new_email) != true
-          puts "That was an invalid email address format,please try again"
+          puts "That was an invalid email address format, please try again."
+          update(user)
+        elsif User.find_by(email:new_email)
+            i = TTY::Prompt.new.select("Sorry, there's already an email account with that address.") do |y|
+              y.choices "Try again?" => "existing", "Go to the main page" => "main", Exit: "exit"
+            end
+
+              case i
+              when "existing"
+                update(user)
+              when "main"
+                main(user)
+              when "exit"
+                puts "Thank you for using, have a nice day.".green
+                exit
+              end
         else
           user.update(email: new_email)
           puts "Email updated!"
@@ -295,7 +309,7 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
         end
     when "name"
       puts "What would you like to change your name to?"
-        new_name = gets.chomp.downcase
+        new_name = gets.strip.downcase
         user.update(name: new_name)
         puts "Name updated!"
           update(user)
@@ -334,20 +348,22 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
 
   def find_by_response(name,user)
 
-    puts "How much would you like to spend?"
+    puts "How much would you like to spend? To go back type exit."
     number = gets.chomp.downcase
-    const = "abcdefghijklmnopqrstuvwxyz '.,/'][=-0`~#!@{'$%^&*()_+|}{;:',.?/'/"
+    const = "abcdefghijklmnopqrstuvwxyz ',/'][=-`~#!@{'%^&*()_+|}{;:',?/'/"
+
+
     if number == "exit"
-         find_by_response(name, user)
-    elsif const.include?(number)
-      puts "Please type in a number."
+         add(user)
+    elsif number.chars.any? {|char| const.include?(char)}
+      puts "Please type in a number. To exit, type exit."
         find_by_response(name, user)
     else
       puts `clear`
       selected_act = Activity.select{|info|info.name == name && info.price <= number.to_i}
       if selected_act.length == 0
-        t = TTY::Prompt.new.select("Sorry, there was nothing in that price range. Want to try again?") do |y|
-          y.choices "Yes" => "Yes", "No" => "No"
+        t = TTY::Prompt.new.select("Sorry, there was nothing in that price range. Want you like to:") do |y|
+          y.choices "Try again?" => "Yes", "Choose a different kind of activity?" => "No", "Go back to the main page" => "main", Exit: "exit"
         end
 
         case t
@@ -355,12 +371,16 @@ M~~~~~~~~~~~=::::::::+:::88I::::::~~~~=7~~~~~~~~M              M~~~~~~~~~Z
           find_by_response(name, user)
         when "No"
           add(user)
+        when "main"
+          main(user)
+        when "exit"
+          puts "Thanks for using! Hope to see you again soon."
+          exit
         end
   else
     prompt = TTY::Prompt.new
     options = []
-      ##################### How do we make it into a table??? ####################
-    selected_act.each {|act| options.push({name: "Place: #{act.place}, Price: #{act.price}, Type: #{act.genre}, Best Time to Go: #{act.best_time}", value: act})}
+    selected_act.each {|act| options.push({name: "Place: #{act.place}, Price: $#{act.price}, Type: #{act.genre}, Best Time to Go: #{act.best_time}", value: act})}
     var = prompt.select("Here are your options:", options)
 
     puts `clear`
