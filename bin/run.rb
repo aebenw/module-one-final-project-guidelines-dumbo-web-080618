@@ -138,6 +138,7 @@ def signup
   puts "Please enter an Email Address".light_blue
   email_address = gets.strip.downcase
   if email_address == "exit"
+    squidward
     puts "Thank you for using Heard From a Friend, have a nice day.".red
     exit
   end
@@ -155,6 +156,7 @@ def signup
       when "signup"
         signup
       when "exit"
+        squidward
         puts "Thank you for using, have a nice day.".green
         exit
       end
@@ -162,14 +164,15 @@ def signup
     puts "Please enter your full name".blue
     name = gets.strip.downcase
       if name == "exit"
+        squidward
         puts "Thank you for using Heard From a Friend, have a nice day.".pink
         exit
-        
+
       end
 
+      puts 'clear'
     new_user = User.create(name:name, email:email_address)
     main(new_user)
-    puts 'clear'
     end
   end
 
@@ -188,6 +191,7 @@ def signup
         when "signup"
           signup
         when "exit"
+          squidward
           puts "Thank you for using, have a nice day.".green
           exit
         end
@@ -211,6 +215,7 @@ def signup
     when "add activities"
       add(user)
     when "exit"
+      squidward
       puts "Thank you for using Heard From a Friend, have a nice day.".pink
       exit
     when "update"
@@ -221,6 +226,7 @@ def signup
 
   def saved_activities(user)
     # user.reload
+    puts `clear`
     all = user.activities
     results = []
     #binding.pry
@@ -232,6 +238,7 @@ def signup
         when "yes"
         add(user)
         when "exit"
+          squidward
         puts "Thanks for using! Have a great day."
         exit
       end
@@ -254,6 +261,7 @@ def signup
           when "search"
             add(user)
           when "exit"
+            squidward
             puts "Thank you so much for using Heard from a Friend. Have a nice day!"
             exit
           end
@@ -264,6 +272,7 @@ def signup
 
   def delete(user)
     # user.reload
+    puts `clear`
     sa = SavedActivity.where(user_id: user.id)
     prompt = TTY::Prompt.new
     options = []
@@ -291,6 +300,7 @@ def signup
 
 
   def update(user)
+    puts `clear`
     i = TTY::Prompt.new.select("Would you like to:") do |y|
     y.choices "Update your Email?" => "email", "Update your name?" => "name", "Delete profile" => "delete", "Return to the main page?" => "main page", Exit: "exit"
     end
@@ -313,6 +323,7 @@ def signup
               when "main"
                 main(user)
               when "exit"
+                squidward
                 puts "Thank you for using, have a nice day.".green
                 exit
               end
@@ -344,6 +355,7 @@ def signup
     when "main page"
       main(user)
     when "exit"
+      squidward
       puts "Thank you for using, have a nice day."
       exit
     end
@@ -352,6 +364,7 @@ def signup
 
 
   def add(user)
+    puts `clear`
     i = TTY::Prompt.new.select("#{user.name}, what kind of activity are you in the mood for?") do |y|
       y.choices Concert: "Concert", Sports: "Sports", Dancing: "Dancing", Bar: "Bar", Museum: "Museum", Park:"Park", "Public Event" => "Public Event"
     end
@@ -361,6 +374,7 @@ def signup
 
 
   def find_by_response(name,user)
+    puts `clear`
 
     puts "How much would you like to spend? To go back type exit."
     number = gets.chomp.downcase
@@ -388,6 +402,7 @@ def signup
         when "main"
           main(user)
         when "exit"
+          squidward
           puts "Thanks for using! Hope to see you again soon."
           exit
         end
@@ -414,6 +429,7 @@ def signup
         when "main"
           main(user)
         when "exit"
+          squidward
           puts "Come back soon!"
           exit
         end
