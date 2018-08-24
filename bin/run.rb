@@ -164,6 +164,7 @@ def signup
       if name == "exit"
         puts "Thank you for using Heard From a Friend, have a nice day.".pink
         exit
+        
       end
 
     new_user = User.create(name:name, email:email_address)
